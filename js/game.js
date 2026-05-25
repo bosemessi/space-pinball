@@ -186,16 +186,20 @@ function gameStep(state, dt) {
     }
   }
 
-  // --- Stuck-ball safety: if the ball has been crawling for several seconds
-  // while in active play, give up and drain it rather than freezing the player. ---
-  if (ball && ball.alive && !ball.captured && state.phase === 'in-play') {
+  // --- Stuck-ball safety: real pinball cabinets do a "ball search" when the
+  // ball stalls — fire solenoids to nudge it loose. We do the same: if the
+  // ball has been crawling for ~2s while in active play (and the player isn't
+  // intentionally holding the ball on a raised flipper), give it a small
+  // downward + lateral kick. Keeps the game alive instead of losing the ball. ---
+  const flipperHeld = state.table.flippers.left.pressed || state.table.flippers.right.pressed;
+  if (ball && ball.alive && !ball.captured && state.phase === 'in-play' && !flipperHeld) {
     const speed = Math.hypot(ball.vx, ball.vy);
-    if (speed < 25) {
+    if (speed < 15) {
       state.stuckTimer = (state.stuckTimer || 0) + dt;
-      if (state.stuckTimer > 5) {
+      if (state.stuckTimer > 2) {
+        ball.vy += 220;                                 // strong downward kick
+        ball.vx += (Math.random() - 0.5) * 140;         // random lateral so symmetric wedges break
         state.stuckTimer = 0;
-        ball.alive = false;
-        onBallLost(state);
       }
     } else {
       state.stuckTimer = 0;
