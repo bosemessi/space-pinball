@@ -402,6 +402,12 @@ function makeSnapshot(state) {
 
 function applyStateSnapshot(state, snap) {
   if (!snap) return;
+  // Only the spectator should apply incoming snapshots. After a turn-advance the
+  // old active player's in-flight snapshots can race ahead of their `turn_start`
+  // message arriving on the other side — if the new active player applied them,
+  // their fresh `phase: 'launching'` would get overwritten back to 'ball-lost'
+  // and they'd be stuck on the Ball Lost overlay.
+  if (!state.isSpectating) return;
   if (snap.ball) {
     if (!state.ball) state.ball = window.SimPinball.createBall(snap.ball.x, snap.ball.y);
     state.ball.x = snap.ball.x;
