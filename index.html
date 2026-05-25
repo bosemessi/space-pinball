@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Space Pinball</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <h1>Space Pinball</h1>
+
+  <!-- ===== Landing ===== -->
+  <section id="screen-landing" class="screen">
+    <p class="lead">A pinball table among the stars.<br>Play solo or take turns with a friend, peer-to-peer.</p>
+
+    <div id="onboarding-tip" class="onboarding-tip" style="display: none;">
+      <p>Tap the left or right side of the table to fire the flippers. Hold the launcher to charge the plunger, release to shoot. Clear drop targets, light S-P-A-C-E, and pop bumpers to rack up points. Three balls per turn — high score wins.</p>
+      <button id="btn-dismiss-tip" class="secondary-btn">Got it</button>
+    </div>
+
+    <div class="form-row form-row-stacked">
+      <label for="player-name">Your name:</label>
+      <input type="text" id="player-name" maxlength="20" placeholder="Anonymous Cadet" autocomplete="off">
+    </div>
+    <div class="screen-actions">
+      <button id="btn-play-solo" class="primary-btn">Play Solo</button>
+      <button id="btn-host-game" class="secondary-btn">Host 2-Player</button>
+    </div>
+  </section>
+
+  <!-- ===== Host lobby ===== -->
+  <section id="screen-lobby-host" class="screen">
+    <h2>Match Lobby</h2>
+    <p id="lobby-status">Setting up lobby…</p>
+
+    <div class="invite-row">
+      <input type="text" id="invite-link" readonly placeholder="invite link will appear here…">
+      <button id="btn-copy-link" class="secondary-btn">Copy</button>
+    </div>
+
+    <div class="lobby-players">
+      <h3>Players</h3>
+      <ol id="player-list"></ol>
+    </div>
+
+    <div id="knock-box" class="knock-box" style="display: none;">
+      <p><span id="knock-name"></span></p>
+      <button id="btn-accept-knock" class="success-btn">Let them in</button>
+      <button id="btn-deny-knock" class="danger-btn">Deny</button>
+    </div>
+
+    <div class="screen-actions">
+      <button id="btn-start-game" class="primary-btn" disabled>Start Match</button>
+      <button id="btn-host-back" class="secondary-btn">Back</button>
+    </div>
+
+    <p class="hint">Share the invite link with one friend. 3 balls each — highest total score wins.</p>
+  </section>
+
+  <!-- ===== Guest lobby ===== -->
+  <section id="screen-lobby-guest" class="screen">
+    <h2>Joining Match</h2>
+    <div id="guest-name-step">
+      <div class="form-row form-row-stacked">
+        <label for="player-name-guest">Your name:</label>
+        <input type="text" id="player-name-guest" maxlength="20" placeholder="Anonymous Cadet" autocomplete="off">
+      </div>
+      <div class="screen-actions">
+        <button id="btn-join-game" class="primary-btn">Join Match</button>
+      </div>
+    </div>
+    <p id="guest-status"></p>
+  </section>
+
+  <!-- ===== Game ===== -->
+  <section id="screen-game" class="screen">
+    <div class="game-header">
+      <div class="header-left">
+        <span id="ball-label">Ball 1 / 3</span>
+        <span id="mission-label" class="mission"></span>
+      </div>
+      <div class="header-right">
+        <span id="turn-label" class="progress">Your turn</span>
+        <button id="btn-leave-game" class="secondary-btn">Leave</button>
+      </div>
+    </div>
+
+    <div class="play-area">
+      <div class="canvas-region">
+        <canvas id="game-canvas" width="600" height="900"></canvas>
+
+        <div id="spectate-banner" class="spectate-banner" style="display: none;">
+          <span id="spectate-text">Watching opponent…</span>
+        </div>
+
+        <div id="ball-overlay" class="overlay" style="display: none;">
+          <div class="overlay-card">
+            <h2 id="ball-overlay-title">Ball Lost</h2>
+            <p id="ball-overlay-sub" class="overlay-sub"></p>
+            <button id="btn-next-ball" class="primary-btn">Next Ball</button>
+          </div>
+        </div>
+
+        <div id="match-overlay" class="overlay" style="display: none;">
+          <div class="overlay-card">
+            <h2 id="match-overlay-title">Match Complete!</h2>
+            <p class="overlay-sub" id="match-overlay-sub"></p>
+            <ol id="match-scoreboard" class="final-scoreboard"></ol>
+            <button id="btn-play-again" class="primary-btn">Play Again</button>
+          </div>
+        </div>
+
+        <!-- Touch zones (only shown on touch devices). Invisible — they overlay the canvas. -->
+        <div id="touch-zones" class="touch-zones">
+          <div class="touch-zone touch-flip-left" data-action="flip-left"></div>
+          <div class="touch-zone touch-flip-right" data-action="flip-right"></div>
+          <div class="touch-zone touch-plunger" data-action="plunger">
+            <span class="plunger-label">PULL</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h2>Score</h2>
+          <ol id="game-player-list"></ol>
+        </div>
+        <div class="sidebar-section sidebar-controls-hint">
+          <h2>Controls</h2>
+          <p class="hint-small">
+            <strong>Tap left / right</strong> of the table to flip<br>
+            <strong>Hold PULL</strong> to charge plunger, release to launch
+          </p>
+          <p class="hint-small hint-keys">
+            Keyboard: <kbd>A</kbd>/<kbd>←</kbd> · <kbd>D</kbd>/<kbd>→</kbd> · <kbd>Space</kbd>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="js/sim.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/network.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

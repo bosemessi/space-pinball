@@ -1,0 +1,227 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0a0f1f;
+  color: #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 20px;
+  box-sizing: border-box;
+  overscroll-behavior: none;
+}
+
+h1 {
+  margin: 0 0 16px 0;
+  font-weight: 500;
+  font-size: 1.7em;
+  letter-spacing: 0.06em;
+  color: #80a8ff;
+  text-shadow: 0 0 16px rgba(120, 160, 255, 0.4);
+}
+
+body[data-screen="game"] h1 { display: none; }
+
+h2 {
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  font-size: 1.3em;
+}
+
+h3 {
+  margin: 8px 0 4px 0;
+  font-size: 0.95em;
+  color: #a8b8d8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.screen { display: none; }
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+}
+#screen-game.active {
+  max-width: 100%;
+}
+
+.lead {
+  text-align: center;
+  color: #a8b0c8;
+  line-height: 1.5;
+  margin: 4px 0 24px;
+}
+
+.screen-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hint {
+  color: #707898;
+  font-size: 0.85em;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.hint-small {
+  color: #a8b0c8;
+  font-size: 0.82em;
+  line-height: 1.5;
+  margin: 4px 0;
+}
+
+.hint-keys { color: #707898; }
+
+.hint-small kbd {
+  background: #0e1530;
+  border: 1px solid #2a3a60;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  font-family: ui-monospace, Menlo, monospace;
+  color: #cce0ff;
+}
+
+.onboarding-tip {
+  width: 100%;
+  background: #1a2540;
+  border: 1px solid #2a3a60;
+  border-left: 4px solid #80a8ff;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 4px 0 16px;
+  font-size: 0.9em;
+  color: #c8d0e8;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.onboarding-tip p { margin: 0 0 8px 0; }
+.onboarding-tip button { padding: 5px 12px; font-size: 0.85em; }
+
+button, select {
+  padding: 9px 16px;
+  font-size: 0.95em;
+  border-radius: 6px;
+  border: 1px solid #2a3a60;
+  background: #1a2540;
+  color: #eee;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) { background: #2a3a60; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.primary-btn {
+  background: #4a6fd0;
+  border-color: #6a8fef;
+  font-weight: 600;
+}
+.primary-btn:hover:not(:disabled) { background: #6a8fef; }
+
+.success-btn {
+  background: #3a8a5a;
+  border-color: #4caf6c;
+}
+.success-btn:hover:not(:disabled) { background: #4aaa6a; }
+
+.danger-btn {
+  background: #8a3a3a;
+  border-color: #c04c4c;
+}
+.danger-btn:hover:not(:disabled) { background: #a04a4a; }
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+  width: 100%;
+}
+
+.form-row-stacked {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-row label {
+  color: #c8d0e8;
+  font-size: 0.95em;
+}
+
+.form-row textarea, .form-row input[type="text"], .form-row input[type="url"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #2a3a60;
+  background: #0e1530;
+  color: #eee;
+  font-family: inherit;
+  font-size: 0.9em;
+  box-sizing: border-box;
+}
+
+.invite-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin: 8px 0 16px;
+}
+
+#invite-link {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px solid #2a3a60;
+  background: #0e1530;
+  color: #cce0ff;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.lobby-players {
+  width: 100%;
+  background: #131c38;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+#player-list {
+  margin: 0;
+  padding-left: 22px;
+  color: #c8d0e8;
+}
+
+#player-list li { padding: 3px 0; }
+
+.knock-box {
+  width: 100%;
+  background: #1a2540;
+  border: 1px solid #80a8ff;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 10px 0;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.knock-box p { margin: 0 0 10px 0; }
+.knock-box button { margin: 0 4px; }
+
+#lobby-status, #guest-status {
+  color: #a8b0c8;
+  margin: 4px 0 8px;
+  text-align: center;
+}

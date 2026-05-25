@@ -1,0 +1,328 @@
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1100px;
+  padding: 8px 12px;
+  background: #131c38;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #c8d0e8;
+  font-size: 0.95em;
+}
+
+#ball-label { color: #80a8ff; font-weight: 600; }
+
+.mission {
+  color: #ffd479;
+  font-weight: 600;
+  font-size: 0.9em;
+  letter-spacing: 0.03em;
+}
+.mission:empty { display: none; }
+
+.progress {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #f0f4ff;
+}
+
+.play-area {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1100px;
+  justify-content: center;
+}
+
+.canvas-region {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+#game-canvas {
+  display: block;
+  background: #020514;
+  border-radius: 8px;
+  box-shadow: 0 0 60px rgba(80, 120, 255, 0.2);
+  touch-action: none;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch zones overlay the canvas. Invisible by default; only show plunger label. */
+.touch-zones {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* children re-enable per-zone */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.touch-zone {
+  position: absolute;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Left flipper zone: left ~45% of the bottom half */
+.touch-flip-left {
+  left: 0;
+  bottom: 0;
+  width: 45%;
+  height: 50%;
+}
+
+/* Right flipper zone: right ~45% of the bottom half (leave a gap for plunger button) */
+.touch-flip-right {
+  right: 0;
+  bottom: 0;
+  width: 45%;
+  height: 50%;
+}
+
+/* Plunger button: small pill at the bottom-right edge */
+.touch-plunger {
+  right: 6px;
+  bottom: 6px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(74, 111, 208, 0.18);
+  border: 2px solid rgba(128, 168, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+
+.touch-plunger.is-pressed {
+  background: rgba(255, 212, 121, 0.35);
+  border-color: #ffd479;
+  transform: scale(0.94);
+}
+
+.plunger-label {
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #cce0ff;
+  pointer-events: none;
+}
+
+.touch-plunger.is-pressed .plunger-label { color: #fff5d6; }
+
+/* Spectate banner — when watching the other player */
+.spectate-banner {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(74, 111, 208, 0.85);
+  color: #fff;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.sidebar {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  background: #131c38;
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.sidebar-section h2 {
+  margin: 0 0 8px 0;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #a8b8d8;
+  border-bottom: 1px solid #2a3a60;
+  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#game-player-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.95em;
+}
+
+#game-player-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  color: #d0d8ee;
+}
+
+#game-player-list li.is-you { color: #80e0ff; }
+#game-player-list li.is-turn {
+  background: rgba(120, 160, 255, 0.12);
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin: 0 -6px;
+}
+
+#game-player-list .player-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+#game-player-list .player-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#game-player-list .player-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #ffd479;
+  font-size: 1.05em;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 31, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.overlay-card {
+  background: #131c38;
+  border: 1px solid #2a3a60;
+  border-radius: 10px;
+  padding: 24px 32px;
+  text-align: center;
+  max-width: 90%;
+  min-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-card h2 { margin: 0 0 8px 0; color: #f0f4ff; }
+.overlay-card .overlay-sub { margin: 0 0 16px 0; color: #a8b0c8; }
+.overlay-card .overlay-sub strong { color: #ffd479; font-size: 1.2em; }
+
+.final-scoreboard {
+  list-style: decimal inside;
+  padding: 0;
+  margin: 0 0 16px 0;
+  text-align: left;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.final-scoreboard li {
+  padding: 6px 10px;
+  color: #d0d8ee;
+  font-size: 1.05em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.final-scoreboard li:first-child { color: #ffd479; font-weight: 700; }
+.final-scoreboard li .player-score { font-variant-numeric: tabular-nums; }
+
+/* Portrait phones/tablets: stack sidebar below the canvas as a slim strip. */
+@media (max-width: 1000px) and (orientation: portrait) {
+  .play-area { flex-direction: column; align-items: center; }
+  .sidebar {
+    width: 100%;
+    max-width: 600px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sidebar-section { flex: 1 1 auto; min-width: 0; }
+  .sidebar-controls-hint { display: none; } /* save room on phones; touch zones are self-evident */
+  #game-player-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  #game-player-list li.is-turn { padding: 2px 6px; margin: 0; }
+}
+
+/* Landscape phones / narrow desktops: keep sidebar on the right, but narrow it. */
+@media (max-width: 1000px) and (orientation: landscape) {
+  .play-area { gap: 8px; }
+  .sidebar {
+    width: 130px;
+    gap: 8px;
+  }
+  .sidebar-section { padding: 6px 8px; }
+  .sidebar-section h2 {
+    font-size: 0.75em;
+    margin: 0 0 4px 0;
+    padding-bottom: 3px;
+  }
+  .sidebar-controls-hint { display: none; }
+  #game-player-list { font-size: 0.8em; }
+  #game-player-list li { padding: 2px 0; gap: 6px; }
+  #game-player-list .player-score { font-size: 0.9em; }
+}
+
+/* Phone-size: shrink chrome. */
+@media (max-width: 900px) {
+  body { padding: 6px; }
+  h1 { font-size: 1.2em; margin-bottom: 8px; }
+  .game-header {
+    font-size: 0.85em;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+  .header-left, .header-right { gap: 8px; }
+}
+
+/* Short viewports (landscape phones): drop the title; minimize header. */
+@media (max-height: 500px) {
+  h1 { display: none; }
+  body { padding: 4px; }
+  .game-header {
+    margin-bottom: 4px;
+    padding: 3px 8px;
+    font-size: 0.8em;
+  }
+  .game-header button { padding: 4px 10px; font-size: 0.85em; }
+}
