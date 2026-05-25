@@ -354,9 +354,16 @@ function ballFlipperCollide(ball, f) {
   if (lenSq < 1e-9) return { hit: false };
   let t = ((ball.x - seg.x1) * ddx + (ball.y - seg.y1) * ddy) / lenSq;
   if (t > 1) t = 1; // clamp at the tip
-  // No lower clamp: t can be negative, treating the flipper as a half-line that
-  // extends past the pivot. This sits beneath/within the inlane wall geometry,
-  // so it doesn't visibly affect normal play, only the corner-trap case.
+  // Extension past the pivot (t<0) is only used when the ball is actually
+  // near the pivot — otherwise the infinite line would catch balls far away
+  // that happen to lie close to it (e.g. a ball in the plunger lane sits
+  // perpendicular-close to the right flipper's line and was getting pushed
+  // back down when fired).
+  if (t < 0) {
+    const dPivotSq = (ball.x - seg.x1) * (ball.x - seg.x1) +
+                     (ball.y - seg.y1) * (ball.y - seg.y1);
+    if (dPivotSq > 900) t = 0; // > 30px from the pivot → use endpoint
+  }
   const cx = seg.x1 + t * ddx;
   const cy = seg.y1 + t * ddy;
   const flipperCapR = 7;
