@@ -342,24 +342,50 @@ function ballCircleCollide(ball, circle, restitution = WALL_RESTITUTION, kick = 
 }
 
 // ===== Collision: ball vs flipper =====
+// The flipper line extends INFINITELY past the pivot (no clamp at t=0).
+// That way a ball directly above the pivot still gets pushed perpendicular to
+// the *flipper slope* (up and outward), not straight up — gravity's tangent
+// component along the slope then slides the ball off toward the tip instead of
+// pinning it at the pivot endpoint. The tip end (t=1) still caps normally.
 function ballFlipperCollide(ball, f) {
   const seg = flipperSegment(f);
-  const c = closestPointOnSegment(ball.x, ball.y, seg.x1, seg.y1, seg.x2, seg.y2);
-  // Flipper has variable radius (thicker at base) — approximate as constant 7px capsule.
+  const ddx = seg.x2 - seg.x1, ddy = seg.y2 - seg.y1;
+  const lenSq = ddx * ddx + ddy * ddy;
+  if (lenSq < 1e-9) return { hit: false };
+  let t = ((ball.x - seg.x1) * ddx + (ball.y - seg.y1) * ddy) / lenSq;
+  if (t > 1) t = 1; // clamp at the tip
+  // No lower clamp: t can be negative, treating the flipper as a half-line that
+  // extends past the pivot. This sits beneath/within the inlane wall geometry,
+  // so it doesn't visibly affect normal play, only the corner-trap case.
+  const cx = seg.x1 + t * ddx;
+  const cy = seg.y1 + t * ddy;
   const flipperCapR = 7;
-  const dx = ball.x - c.x;
-  const dy = ball.y - c.y;
+  const dx = ball.x - cx;
+  const dy = ball.y - cy;
   const rSum = BALL_R + flipperCapR;
   const distSq = dx * dx + dy * dy;
   if (distSq > rSum * rSum) return { hit: false };
-  const dist = Math.sqrt(distSq) || 0.0001;
-  const nx = dx / dist, ny = dy / dist;
+  const dist = Math.sqrt(distSq);
+  // Degenerate case: ball exactly on the line. Pick "outward" (perpendicular to
+  // the line, on the playfield-facing side) so we still get a sensible push.
+  let nx, ny;
+  if (dist < 0.01) {
+    const ux = ddx / Math.sqrt(lenSq), uy = ddy / Math.sqrt(lenSq);
+    // Perpendicular pointing up-outward (rotate tangent -90° in screen coords)
+    nx = uy; ny = -ux;
+  } else {
+    nx = dx / dist; ny = dy / dist;
+  }
   const overlap = rSum - dist + 0.1;
   ball.x += nx * overlap;
   ball.y += ny * overlap;
-  // Velocity at contact point on the flipper (from its rotation).
-  const surf = flipperPointVelocity(f, c.x, c.y);
-  // Relative velocity of ball w.r.t. surface
+  // Angular velocity: use the clamped-at-pivot position so we don't pretend the
+  // flipper extends backward physically (it doesn't — the line extension is just
+  // a collision-normal trick).
+  const angT = t < 0 ? 0 : t;
+  const angX = seg.x1 + angT * ddx;
+  const angY = seg.y1 + angT * ddy;
+  const surf = flipperPointVelocity(f, angX, angY);
   const relVx = ball.vx - surf.vx;
   const relVy = ball.vy - surf.vy;
   const vn = relVx * nx + relVy * ny;
