@@ -170,10 +170,10 @@ function buildTable() {
   }));
 
   // ===== Wormhole kicker (small saucer left side) =====
-  const wormhole = { x: 80, y: 310, r: 18, captureTime: 0.65, hits: 0, captured: false, captureTimer: 0 };
+  const wormhole = { x: 80, y: 310, r: 18, captureTime: 0.65, hits: 0, captured: false, captureTimer: 0, cooldownTimer: 0 };
 
   // ===== Black hole saucer (center, between bumpers) =====
-  const blackHole = { x: 300, y: 540, r: 19, captureTime: 0.85, hits: 0, captured: false, captureTimer: 0 };
+  const blackHole = { x: 300, y: 540, r: 19, captureTime: 0.85, hits: 0, captured: false, captureTimer: 0, cooldownTimer: 0 };
 
   // ===== Flippers =====
   // Pivots spread wide enough that, at rest, the tips leave a clear drain channel
@@ -403,9 +403,12 @@ function ballLaneOverlap(ball, lane) {
 }
 
 // ===== Capture saucer (wormhole/black hole) =====
-// If ball center is inside the saucer radius and slow-ish, it gets captured.
+// If ball center is inside the saucer radius, it gets captured.
+// A cooldown timer (set on eject) blocks immediate re-capture so a ball that's
+// been kicked out has time to clear the area before being eligible again.
 function trySaucerCapture(ball, saucer) {
   if (saucer.captured) return false;
+  if (saucer.cooldownTimer > 0) return false;
   const dx = ball.x - saucer.x;
   const dy = ball.y - saucer.y;
   const d2 = dx * dx + dy * dy;
@@ -423,15 +426,18 @@ function trySaucerCapture(ball, saucer) {
   return false;
 }
 
-// Eject a ball that was captured. Direction is configurable (default: random upward).
+// Eject a ball that was captured. Place the ball OUTSIDE the saucer's capture radius
+// AND start a recapture cooldown so the ball has time to leave the area.
 function ejectFromSaucer(ball, saucer, angle, speed) {
   saucer.captured = false;
   saucer.captureTimer = 0;
+  saucer.cooldownTimer = 1.2; // seconds during which the saucer cannot recapture
   ball.captured = null;
+  const ejectDist = saucer.r + BALL_R + 6;
+  ball.x = saucer.x + Math.cos(angle) * ejectDist;
+  ball.y = saucer.y + Math.sin(angle) * ejectDist;
   ball.vx = Math.cos(angle) * speed;
   ball.vy = Math.sin(angle) * speed;
-  ball.x = saucer.x;
-  ball.y = saucer.y - BALL_R - 2;
 }
 
 window.SimPinball = {

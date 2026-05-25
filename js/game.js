@@ -145,21 +145,21 @@ function gameStep(state, dt) {
     }
   }
 
-  // --- Saucer capture timers ---
+  // --- Saucer capture / cooldown timers ---
   for (const sname of ['wormhole', 'blackHole']) {
     const s = state.table[sname];
     if (s.captured) {
       s.captureTimer -= dt;
       if (s.captureTimer <= 0) {
-        // Eject ball
         const ball = state.ball;
         if (ball && ball.captured === s) {
-          // Slightly randomized upward+lateral ejection
-          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.6;
-          S.ejectFromSaucer(ball, s, angle, 700);
+          // Wider angle jitter so the ball is less likely to fall straight back in.
+          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+          S.ejectFromSaucer(ball, s, angle, 720);
         }
       }
     }
+    if (s.cooldownTimer > 0) s.cooldownTimer = Math.max(0, s.cooldownTimer - dt);
   }
 
   // --- Bumper flash fade ---
