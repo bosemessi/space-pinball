@@ -186,6 +186,24 @@ function gameStep(state, dt) {
     }
   }
 
+  // --- Stuck-ball safety: if the ball has been crawling for several seconds
+  // while in active play, give up and drain it rather than freezing the player. ---
+  if (ball && ball.alive && !ball.captured && state.phase === 'in-play') {
+    const speed = Math.hypot(ball.vx, ball.vy);
+    if (speed < 25) {
+      state.stuckTimer = (state.stuckTimer || 0) + dt;
+      if (state.stuckTimer > 5) {
+        state.stuckTimer = 0;
+        ball.alive = false;
+        onBallLost(state);
+      }
+    } else {
+      state.stuckTimer = 0;
+    }
+  } else {
+    state.stuckTimer = 0;
+  }
+
   // --- Particles + popups ---
   for (let i = state.particles.length - 1; i >= 0; i--) {
     const pt = state.particles[i];

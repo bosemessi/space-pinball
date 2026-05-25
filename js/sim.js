@@ -106,6 +106,12 @@ function buildTable() {
   walls.push({ x1: 18, y1: 760, x2: 200, y2: 825 });   // left inlane (outer wall → flipper pivot)
   walls.push({ x1: 540, y1: 760, x2: 400, y2: 825 });  // right inlane (divider → flipper pivot)
 
+  // -- Flipper back-walls: short walls behind each pivot so a ball coming around
+  // the back can't get wedged between the flipper pivot and the inlane endpoint.
+  // They funnel the ball straight down into the drain instead.
+  walls.push({ x1: 200, y1: 825, x2: 180, y2: 880 });  // left flipper back
+  walls.push({ x1: 400, y1: 825, x2: 420, y2: 880 });  // right flipper back
+
   // ===== Bumpers (planet pop-bumpers) =====
   const bumpers = [
     { x: 175, y: 460, r: 32, hits: 0 },
